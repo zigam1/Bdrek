@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تحقق من الجهاز</title>
+<style>
+  :root {
+    --bg: #f1f3f4;
+    --card: #ffffff;
+    --text: #202124;
+    --muted: #5f6368;
+    --blue: #1a73e8;
+    --red: #ff2d2d;
+    --green: #2dff6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* ===== Step 1: fake permission dialog ===== */
+  #gate {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .dialog {
+    margin-top: 12vh;
+    width: 100%;
+    max-width: 380px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 22px 20px 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.18);
+  }
+  .dialog h1 { font-size: 17px; font-weight: 600; line-height: 1.6; margin-bottom: 8px; }
+  .dialog p { font-size: 14px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .actions { display: flex; gap: 10px; justify-content: flex-start; }
+  .actions button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid #dadce0;
+    background: #fff;
+    color: var(--blue);
+    cursor: pointer;
+  }
+  .actions button.allow { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .actions button:focus-visible { outline: 3px solid #8ab4f8; outline-offset: 2px; }
+
+  /* ===== Step 2: fake hack screen ===== */
+  #hacked {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    color: var(--green);
+    font-family: "Courier New", Courier, monospace;
+    padding: 18px 16px;
+    overflow: hidden;
+    direction: ltr;
+    text-align: left;
+    z-index: 10;
+  }
+  #hacked.on { display: block; }
+  #log { font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  #banner {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.92);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    direction: rtl;
+  }
+  #banner.on { display: flex; }
+  #banner .skull { font-size: 72px; margin-bottom: 10px; }
+  #banner h2 {
+    color: var(--red);
+    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+    font-size: clamp(30px, 9vw, 54px);
+    margin-bottom: 14px;
+    animation: pulse 1s infinite;
+  }
+  #banner p {
+    color: #fff;
+    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+    font-size: 16px;
+    line-height: 1.9;
+    max-width: 420px;
+  }
+  #bar { width: min(80vw, 380px); height: 10px; background: #222; border-radius: 6px; margin-top: 22px; overflow: hidden; }
+  #bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .3s linear; }
+  #reveal {
+    display: none;
+    margin-top: 26px;
+    font: inherit;
+    font-size: 15px;
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: 0;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+  }
+  @keyframes pulse { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { #banner h2 { animation: none; } }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="dialog" role="dialog" aria-labelledby="t">
+    <h1 id="t">هذا الموقع يريد التحقق من جهازك</h1>
+    <p>اضغط "سماح" لمتابعة التصفح بشكل آمن.</p>
+    <div class="actions">
+      <button class="allow" id="allow">سماح</button>
+      <button id="block">حظر</button>
+    </div>
+  </div>
+</div>
+
+<div id="hacked">
+  <div id="log"></div>
+  <div id="banner">
+    <div class="skull">💀</div>
+    <h2>تم تهكيرك بنجاح!</h2>
+    <p>تم الوصول إلى جهازك وجميع ملفاتك.<br>لا تغلق الصفحة.</p>
+    <div id="bar"><span></span></div>
+    <button id="reveal">كنت أمزح 😂</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  const gate = document.getElementById('gate');
+  const hacked = document.getElementById('hacked');
+  const logEl = document.getElementById('log');
+  const banner = document.getElementById('banner');
+  const bar = document.querySelector('#bar span');
+  const reveal = document.getElementById('reveal');
+
+  const lines = [
+    '> initializing connection...',
+    '> bypassing firewall.............. OK',
+    '> accessing device storage........ OK',
+    '> reading contacts................ OK',
+    '> copying photos.................. 38%',
+    '> copying photos.................. 71%',
+    '> copying photos.................. 100%',
+    '> uploading to remote server...',
+    '> root access granted',
+    '> SYSTEM COMPROMISED'
+  ];
+
+  function startHack() {
+    gate.style.display = 'none';
+    hacked.classList.add('on');
+    let i = 0;
+    const timer = setInterval(() => {
+      logEl.textContent += lines[i] + '\n';
+      bar.style.width = ((i + 1) / lines.length * 100) + '%';
+      i++;
+      if (i >= lines.length) {
+        clearInterval(timer);
+        setTimeout(() => banner.classList.add('on'), 500);
+      }
+    }, 450);
+  }
+
+  document.getElementById('allow').addEventListener('click', startHack);
+  // "Block" does the same, so the prank always lands
+  document.getElementById('block').addEventListener('click', startHack);
+
+  // Secret exit: tap the top-left corner 5 times (or press Escape) to show the reveal button
+  let taps = 0;
+  const showReveal = () => { reveal.style.display = 'inline-block'; banner.classList.add('on'); };
+  hacked.addEventListener('click', (e) => {
+    if (e.clientX < 80 && e.clientY < 80 && ++taps >= 5) showReveal();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') showReveal(); });
+
+  reveal.addEventListener('click', () => location.reload());
+})();
+</script>
+</body>
+</html>
