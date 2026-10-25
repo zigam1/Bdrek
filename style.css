@@ -1,0 +1,125 @@
+  :root {
+    --bg: #f1f3f4;
+    --card: #ffffff;
+    --text: #202124;
+    --muted: #5f6368;
+    --blue: #1a73e8;
+    --red: #ff2d2d;
+    --green: #2dff6b;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* ===== Step 1: fake permission dialog ===== */
+  #gate {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .dialog {
+    margin-top: 12vh;
+    width: 100%;
+    max-width: 380px;
+    background: var(--card);
+    border-radius: 14px;
+    padding: 22px 20px 16px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.18);
+  }
+  .dialog h1 { font-size: 17px; font-weight: 600; line-height: 1.6; margin-bottom: 8px; }
+  .dialog p { font-size: 14px; color: var(--muted); line-height: 1.8; margin-bottom: 18px; }
+  .actions { display: flex; gap: 10px; justify-content: flex-start; }
+  .actions button {
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 22px;
+    border-radius: 999px;
+    border: 1px solid #dadce0;
+    background: #fff;
+    color: var(--blue);
+    cursor: pointer;
+  }
+  .actions button.allow { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .actions button:focus-visible { outline: 3px solid #8ab4f8; outline-offset: 2px; }
+
+  /* ===== Step 2: fake hack screen ===== */
+  #hacked {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    color: var(--green);
+    font-family: "Courier New", Courier, monospace;
+    padding: 18px 16px;
+    overflow: hidden;
+    direction: ltr;
+    text-align: left;
+    z-index: 10;
+  }
+  #hacked.on { display: block; }
+  #log { font-size: 13px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; }
+  #note {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 20;
+    background: #fff;
+    color: #000;
+    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+    font-size: 13px;
+    text-align: center;
+    padding: 8px 12px;
+    direction: rtl;
+  }
+  #banner {
+    display: none;
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.92);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    direction: rtl;
+  }
+  #banner.on { display: flex; }
+  #banner .skull { font-size: 72px; margin-bottom: 10px; }
+  #banner h2 {
+    color: var(--red);
+    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+    font-size: clamp(30px, 9vw, 54px);
+    margin-bottom: 14px;
+    animation: pulse 1s infinite;
+  }
+  #banner p {
+    color: #fff;
+    font-family: system-ui, "Segoe UI", Tahoma, sans-serif;
+    font-size: 16px;
+    line-height: 1.9;
+    max-width: 420px;
+  }
+  #bar { width: min(80vw, 380px); height: 10px; background: #222; border-radius: 6px; margin-top: 22px; overflow: hidden; }
+  #bar span { display: block; height: 100%; width: 0; background: var(--red); transition: width .3s linear; }
+  #reveal {
+    display: none;
+    margin-top: 26px;
+    font: inherit;
+    font-size: 15px;
+    padding: 10px 24px;
+    border-radius: 999px;
+    border: 0;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+  }
+  @keyframes pulse { 50% { opacity: .55; } }
+  @media (prefers-reduced-motion: reduce) { #banner h2 { animation: none; } }
